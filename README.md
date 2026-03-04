@@ -43,20 +43,30 @@ The installation steps differ slightly depending on your operating system.
 
 #### macOS (Homebrew)
   Install Mosquitto using Homebrew:<br>
-   ```brew install mosquitto```
+   ```
+   brew install mosquitto
+```
 
   Start the broker:<br>
-  ```mosquitto```
+  ```
+  mosquitto
+```
 
   Run Mosquitto as a background service:<br>
-```brew services start mosquitto```
+```
+brew services start mosquitto
+```
 
   Stop the service:<br>
-```brew services stop mosquitto```
+```
+brew services stop mosquitto
+```
 
 #### Windows
  Download Mosquitto from:<br>
-```https://mosquitto.org/download/```
+```
+https://mosquitto.org/download/
+```
   
  Install Mosquitto and enable:<br>
 ```
@@ -65,25 +75,36 @@ Install Broker
 ```
 
 Start the broker from Command Prompt:<br>
-```mosquitto```
+```
+mosquitto
+```
 
 #### Linux (Ubuntu / Debian)
+
+Install Mosquitto:
 ```
-Install Mosquitto:<br>
-sudo apt update<br>
+sudo apt update
 sudo apt install mosquitto mosquitto-clients 
 ```
   Start the broker:<br>
-```sudo systemctl start mosquitto```
+```
+sudo systemctl start mosquitto
+```
 
   Enable Mosquitto to run automatically on startup:<br>
-  ```sudo systemctl enable mosquitto```
+  ```
+  sudo systemctl enable mosquitto
+```
 
   Check broker status:<br>
-  ```sudo systemctl status mosquitto```
+  ```
+  sudo systemctl status mosquitto
+```
 
 Default broker address:<br>
-```localhost:1883```
+```
+localhost:1883
+```
 
 ### 2. Verify MQTT Broker
 You can test MQTT communication before running the experiment.  
@@ -130,13 +151,19 @@ pip install -r requirements.txt
 Open three terminals.<br>
 
 Terminal 1 — Start MQTT Broker
-```mosquitto```
+```
+mosquitto
+```
 
 Terminal 2 — Start Server
-```python experiments/server_subscriber.py```
+```
+python experiments/server_subscriber.py
+```
 
 Terminal 3 — Start Device
-```python experiments/device_publisher.py```
+```
+python experiments/device_publisher.py
+```
 
 ### Troubleshooting
 
@@ -144,9 +171,13 @@ Terminal 3 — Start Device
 
 Check if port 1883 is active:<br>
 macOS / Linux
-```lsof -i :1883```
+```
+lsof -i :1883
+```
 Windows
-```netstat -ano | findstr 1883```
+```
+netstat -ano | findstr 1883
+```
 
 #### Device does not receive public key
 Ensure the server is started before the device.
@@ -154,4 +185,6 @@ Ensure the server is started before the device.
 #### Python dependency issues
 
 Upgrade pip:
-```pip install --upgrade pip```
+```
+pip install --upgrade pip
+```
