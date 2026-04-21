@@ -1,0 +1,6 @@
+pqcrypto
+paho-mqtt
+cryptography
+jupyter
+matplotlib
+pandas

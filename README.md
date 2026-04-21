@@ -1,5 +1,25 @@
 # EXPERIMENT FOR MQTT AND PQC
 
+# UPDATED
+
+It includes:
+
+- ML-KEM-512 secure handshake
+- X25519 classical handshake
+- AES-GCM encrypted MQTT messages
+- handshake latency benchmark
+- approximate byte-transfer benchmark
+
+## Structure
+
+```text
+pqc-iot/
+├── experiments/
+├── results/
+├── notebooks/
+├── requirements.txt
+└── README.md
+```
 ## Post-Quantum Cryptography MQTT Experiment
 
 This repository demonstrates a Post-Quantum Cryptography (PQC) secure communication prototype for IoT messaging using ML-KEM-512 (Kyber) and MQTT.
