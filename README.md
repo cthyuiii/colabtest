@@ -1,210 +1,173 @@
-# EXPERIMENT FOR MQTT AND PQC
+# PQC IoT MQTT Prototype
 
-# UPDATED
+A MacBook-friendly prototype for replicating the **transport-security** part of a post-quantum IoT architecture project.
 
-It includes:
+This repository focuses on the gateway ↔ network-server style communication path using:
 
-- ML-KEM-512 secure handshake
-- X25519 classical handshake
-- AES-GCM encrypted MQTT messages
-- handshake latency benchmark
-- approximate byte-transfer benchmark
+- **ML-KEM-512** for post-quantum key establishment
+- **X25519** as a classical baseline
+- **AES-GCM** for payload encryption
+- **MQTT (Mosquitto)** for message transport
+- benchmark scripts for:
+  - handshake latency
+  - approximate handshake byte size
 
-## Structure
+This is a practical local replication of the final report’s secure transport and measurement workflow, without requiring the full LoRaWAN hardware lab setup.
+
+---
+
+## Features
+
+- PQC MQTT demo using **ML-KEM-512**
+- Classical MQTT demo using **X25519**
+- AES-GCM encrypted payload exchange
+- Rekeying every `N` messages in PQC mode
+- Handshake benchmark with CSV output
+- Approximate byte-size benchmark with CSV output
+- Jupyter notebook for result inspection
+
+---
+
+## How it works
+
+### PQC mode
+	1.	The server generates an ML-KEM-512 keypair
+	2.	The server publishes its public key to MQTT
+	3.	The device receives the server public key
+	4.	The device encapsulates a shared secret using ML-KEM-512
+	5.	The device sends the ciphertext to the server
+	6.	The server decapsulates the ciphertext
+	7.	Both sides derive the same AES key
+	8.	The device encrypts messages using AES-GCM
+	9.	The server decrypts and prints the plaintext
+
+### Classical mode
+
+	The same workflow is reproduced using X25519 for key agreement so that classical and post-quantum behavior can be compared.
+
+## Repository structure
 
 ```text
 pqc-iot/
 ├── experiments/
+│   ├── pqc_mqtt_device.py
+│   ├── pqc_mqtt_server.py
+│   ├── classical_mqtt_device.py
+│   ├── classical_mqtt_server.py
+│   ├── benchmark_handshake.py
+│   └── benchmark_bytes.py
 ├── results/
+│   └── .gitkeep
 ├── notebooks/
+│   └── analysis.ipynb
 ├── requirements.txt
 └── README.md
 ```
-## Post-Quantum Cryptography MQTT Experiment
 
-This repository demonstrates a Post-Quantum Cryptography (PQC) secure communication prototype for IoT messaging using ML-KEM-512 (Kyber) and MQTT.
+## Installtion 
 
-The project simulates an IoT device communicating securely with a server using:
-	•	ML-KEM-512 → Post-Quantum key exchange
-	•	AES-GCM → Symmetric encryption for message payloads
-	•	MQTT (Mosquitto) → Messaging protocol
-  
-The experiment includes benchmarking and re-keying policies to evaluate performance overhead of PQC in IoT communication systems.
-
-### Architecture
-IoT Device (Publisher) → ML-KEM-512 Key Encapsulation → MQTT Broker (Mosquitto) → Server (Subscriber)
-
-### Communication workflow:
-	1.	Server generates ML-KEM public/private keypair
-	2.	Server publishes public key via MQTT
-	3.	Device receives public key
-	4.	Device performs ML-KEM encapsulation to create shared secret
-	5.	Device sends ciphertext to server
-	6.	Server decapsulates to recover shared secret
-	7.	Both derive AES-256 session key
-	8.	Device sends encrypted MQTT messages
-	9.	Server decrypts messages
-
-
-### File - Purpose<br>
-server_subscriber.py - Simulates IoT server receiving encrypted MQTT messages<br>
-device_publisher.py - Simulates IoT device sending encrypted messages<br>
-pqc_mqtt_experiment.ipynb - Notebook demonstrating PQC experiments<br>
-
-## Installation Guide
-This project requires:<br>
-	•	Python 3.9+<br>
-	•	Mosquitto MQTT broker<br>
-	•	Python packages for PQC and MQTT communication<br>
-
-The installation steps differ slightly depending on your operating system.
-
-### 1. Install Mosquitto MQTT Broker
-
-#### macOS (Homebrew)
-  Install Mosquitto using Homebrew:<br>
-   ```
-   brew install mosquitto
-```
-
-  Start the broker:<br>
-  ```
-  mosquitto
-```
-
-  Run Mosquitto as a background service:<br>
-```
-brew services start mosquitto
-```
-
-  Stop the service:<br>
-```
-brew services stop mosquitto
-```
-
-#### Windows
- Download Mosquitto from:<br>
-```
-https://mosquitto.org/download/
-```
-  
- Install Mosquitto and enable:<br>
-```
-Install Service
-Install Broker
-```
-
-Start the broker from Command Prompt:<br>
-```
-mosquitto
-```
-
-#### Linux (Ubuntu / Debian)
-
-Install Mosquitto:
-```
-sudo apt update
-sudo apt install mosquitto mosquitto-clients 
-```
-  Start the broker:<br>
-```
-sudo systemctl start mosquitto
-```
-
-  Enable Mosquitto to run automatically on startup:<br>
-  ```
-  sudo systemctl enable mosquitto
-```
-
-  Check broker status:<br>
-  ```
-  sudo systemctl status mosquitto
-```
-
-Default broker address:<br>
-```
-localhost:1883
-```
-
-### 2. Verify MQTT Broker
-You can test MQTT communication before running the experiment.  
-
-Open two terminals.<br>
-
-Terminal 1 (Subscriber)
-```
-mosquitto_sub -h localhost -t test/topic
-```
-
-Terminal 2 (Publisher)
-```
-mosquitto_pub -h localhost -t test/topic -m "Hello MQTT"
-```
-
-If everything works, Terminal 1 should display:
-```
-Hello MQTT
-```
-
-### 3. Clone Repository
 ```
 git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
 cd YOUR_REPO_NAME
 ```
 
-### 4. Install Python Dependencies
+### macos / linux
+```
+python3 -m venv .venv
+source .venv/bin/activate
+```
 
-macOS / Linux
+### Windows (Command Prompt)
+
+```
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+### Update Pip
+
+```
+python -m pip install --upgrade pip
+```
+
+### Install Python dependencies
+
 ```
 pip install -r requirements.txt
 ```
 
-Windows
+### Install Mosquitto MQTT Broker (Macos)
 
-Run in Command Prompt or PowerShell:
 ```
-pip install -r requirements.txt
+brew install mosquitto
+mosquitto
 ```
 
-### 5. Run the Experiment
+### Install Mosquitto MQTT Broker (Linux)
 
-Open three terminals.<br>
+```
+sudo apt update
+sudo apt install mosquitto mosquitto-clients
+mosquitto
+```
 
-Terminal 1 — Start MQTT Broker
+### Install Mosquitto MQTT Broker (Windows)
+
+```
+https://mosquitto.org
+mosquitto
+```
+
+## Running the PQC MQTT demo
+
+### Terminal 1 — Start Mosquitto
+
 ```
 mosquitto
 ```
 
-Terminal 2 — Start Server
+### Terminal 2 — Start PQC server
+
 ```
-python experiments/server_subscriber.py
+python experiments/pqc_mqtt_server.py
 ```
 
-Terminal 3 — Start Device
+### Terminal 3 — Start PQC device
+
 ```
-python experiments/device_publisher.py
+python experiments/pqc_mqtt_device.py --messages 20 --rekey-every 5
 ```
 
-### Troubleshooting
+## Running the classical MQTT demo
 
-#### MQTT broker not running<br>
+### Terminal 1 — Start Mosquitto
 
-Check if port 1883 is active:<br>
-macOS / Linux
 ```
-lsof -i :1883
-```
-Windows
-```
-netstat -ano | findstr 1883
+mosquitto
 ```
 
-#### Device does not receive public key
-Ensure the server is started before the device.
+### Terminal 2 — Start classical server
 
-#### Python dependency issues
-
-Upgrade pip:
 ```
-pip install --upgrade pip
+python experiments/classical_mqtt_server.py
+```
+
+### Terminal 3 — Start classical device
+
+```
+python experiments/classical_mqtt_device.py --messages 10
+```
+
+## Running the benchmarks
+
+### Handshake latency benchmark
+
+```
+python experiments/benchmark_handshake.py --iterations 100
+```
+
+### Approximate byte-size benchmark
+
+```
+python experiments/benchmark_bytes.py
 ```
